@@ -1,0 +1,8 @@
+{
+  "name": "TarkovRadar",
+  "description": "Interactive 3D maps and in-raid companion for Escape From Tarkov with multi-floor navigation, loot filters, extract tracking, and offline support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

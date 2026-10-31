@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for TarkovRadar, an Escape From Tarkov mobile companion app featuring interactive multi-layer isometric 3D map navigation, real-time loot spawn markers with rarity filtering, extraction tracking with requirement checklists, raid timers, scav boss spawn locators, quest markers, ballistics ammo charts, and 100% offline mode support.",
+  "updatedAt":  "2026-10-31T06:29:37.960073391Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}
