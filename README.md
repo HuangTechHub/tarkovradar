@@ -14,8 +14,7 @@ An offline, zero-telemetry tactical companion and interactive map suite for Esca
 
 - **Package Name**: `com.tarkovradar.app`
 - **Current Version**: `versionCode 4`, `versionName 4.0`
-- **Target SDK**: Android 16 (API 36), Min SDK: Android 7.0 (API 24)
-- **Privacy Policy**: [Hosted Policy](https://ais-pre-3da7mm66phssvwyi2vytqa-628863764922.us-west2.run.app/privacy.html) | Local: `/public/privacy.html`
+- **Privacy Policy**: [PRIVACY_POLICY.md](PRIVACY_POLICY.md) | [docs/index.html](docs/index.html) (GitHub Pages ready)
 
 ## Google Play Publishing Documentation
 

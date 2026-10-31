@@ -13,7 +13,7 @@ This guide provides everything needed to prepare, configure, and publish **Tarko
 | **Current Version Code** | `4` |
 | **Current Version Name** | `4.0` |
 | **Developer Contact Email** | `kthuang09@gmail.com` |
-| **Privacy Policy URL** | `https://ais-pre-3da7mm66phssvwyi2vytqa-628863764922.us-west2.run.app/privacy.html` |
+| **Privacy Policy URLs (Any of these work)** | **Option A (GitHub Pages - Recommended):** `https://<github-username>.github.io/<repo-name>/`<br>**Option B (GitHub Markdown):** `https://github.com/<github-username>/<repo-name>/blob/main/PRIVACY_POLICY.md`<br>**Option C (Cloud Run / AI Studio):** `https://ais-pre-3da7mm66phssvwyi2vytqa-628863764922.us-west2.run.app/privacy.html` |
 | **App Type** | App (Tools / Game Companion) |
 | **Monetization / Pricing** | Free (No Ads, No In-App Purchases) |
 | **Target Android SDK** | API 36 (Android 16 / 15 compatible, Min SDK 24 / Android 7.0+) |
@@ -94,7 +94,7 @@ Navigate to **Policy and programs** $\rightarrow$ **App content** on the left me
 
 | Section | Required Selection / Input | Details |
 | :--- | :--- | :--- |
-| **Privacy Policy** | `https://ais-pre-3da7mm66phssvwyi2vytqa-628863764922.us-west2.run.app/privacy.html` | Compliant zero-telemetry policy hosted on your web app. |
+| **Privacy Policy** | **Option 1 (GitHub Pages):** `https://<user>.github.io/<repo>/`<br>**Option 2 (GitHub file):** `https://github.com/<user>/<repo>/blob/main/PRIVACY_POLICY.md`<br>**Option 3 (Direct):** `https://ais-pre-3da7mm66phssvwyi2vytqa-628863764922.us-west2.run.app/privacy.html` | See detailed 3-step GitHub setup below. |
 | **App Access** | **"All functionality is available without special access"** | The app does not require a login, subscription, or credentials. |
 | **Ads** | **"No, my app does not contain ads"** | TarkovRadar is 100% ad-free. |
 | **Content Rating** | Complete the IARC questionnaire: | Select **Utility, Productivity, Communication, or Other** (or Reference/Companion). Declare: No violence in the app itself (game reference text and charts only), no profanity, no user-generated content, no physical location sharing. Expected rating: **Everyone** / **Teen** (13+). |
@@ -104,6 +104,25 @@ Navigate to **Policy and programs** $\rightarrow$ **App content** on the left me
 | **Data Safety** | Data collection answer: **"No"** | Select **"No, the app doesn't collect or share any of the required user data types"**. All checklists, raid notes, and map markers are stored exclusively on-device in a local Room SQLite database. No analytics, tracking, or network telemetry SDKs are used. |
 | **Government Apps** | **"No"** | Not a government entity. |
 | **Financial Features** | **"My app does not provide any financial features"** | No monetary transactions. |
+
+#### How to host your Privacy Policy on your public GitHub Repository:
+1. **Option A: Free GitHub Pages (Best & Most Professional)**
+   - Push your code to your public GitHub repository. (We have already placed `docs/index.html` and `docs/privacy.html` in the repository).
+   - In your GitHub repository, click **Settings** (top tab) $\rightarrow$ **Pages** (left sidebar under "Code and automation").
+   - Under **Build and deployment** $\rightarrow$ **Branch**:
+     - Select branch: `main` (or `master`)
+     - Select folder: `/docs`
+     - Click **Save**.
+   - Within 1–2 minutes, GitHub will publish your live website at:
+     `https://<your-github-username>.github.io/<your-repo-name>/`
+   - Paste that URL into Google Play Console's Privacy Policy field.
+
+2. **Option B: GitHub Markdown File Link**
+   - We have already placed `PRIVACY_POLICY.md` in the root of the repository.
+   - When pushed to GitHub, navigate to `PRIVACY_POLICY.md` in your browser.
+   - Copy the browser URL:
+     `https://github.com/<your-github-username>/<your-repo-name>/blob/main/PRIVACY_POLICY.md`
+   - Paste that URL directly into Google Play Console. (Note: Never use the `raw.githubusercontent.com` raw text link; always use the `github.com/.../blob/...` link so Google Play's verification bot renders the page with full formatting).
 
 ---
 

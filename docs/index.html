@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - TarkovRadar</title>
+    <style>
+        :root {
+            --bg-color: #0b0f17;
+            --surface-color: #141c2b;
+            --border-color: #26384f;
+            --primary-accent: #00e5ff;
+            --secondary-accent: #00e676;
+            --warning-accent: #ffb300;
+            --text-primary: #e6edf3;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 24px 16px;
+        }
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px 28px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .badge {
+            display: inline-block;
+            background-color: rgba(0, 229, 255, 0.1);
+            color: var(--primary-accent);
+            border: 1px solid var(--primary-accent);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            font-family: monospace;
+        }
+        h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+            color: #ffffff;
+            font-weight: 800;
+        }
+        .app-name {
+            color: var(--primary-accent);
+        }
+        .meta {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 24px;
+            font-family: monospace;
+        }
+        .highlight-box {
+            background-color: rgba(255, 179, 0, 0.08);
+            border-left: 4px solid var(--warning-accent);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 28px;
+        }
+        .highlight-title {
+            color: var(--warning-accent);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-family: monospace;
+        }
+        .highlight-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .highlight-box li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .highlight-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-accent);
+            font-weight: bold;
+        }
+        h2 {
+            font-size: 18px;
+            color: #ffffff;
+            margin-top: 24px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+        p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+        .contact-box {
+            background-color: #0b111a;
+            border: 1px solid var(--border-color);
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+        .footer {
+            margin-top: 36px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 18px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="badge">Privacy Policy & Security Disclosure</span>
+        <h1>Privacy Policy for <span class="app-name">TarkovRadar</span></h1>
+        <div class="meta">Effective Date: October 31, 2026 • Version 4.0 (Zero-Telemetry Architecture)</div>
+
+        <div class="highlight-box">
+            <div class="highlight-title">Summary at a Glance</div>
+            <ul>
+                <li><strong>100% Offline:</strong> TarkovRadar does not connect to any servers, backends, or APIs.</li>
+                <li><strong>Zero Personal Data:</strong> We do not collect, store, sell, or transmit any personally identifiable information.</li>
+                <li><strong>No Accounts or Tracking:</strong> No sign-in required, no cookies, no advertising SDKs, and no analytics.</li>
+                <li><strong>Local Device Storage Only:</strong> Tactical map markers and extraction checklists are kept solely in private local SQLite storage on your Android device.</li>
+            </ul>
+        </div>
+
+        <h2>1. Information We Do Not Collect</h2>
+        <p>TarkovRadar ("the App") operates entirely on-device as an offline tactical companion guide for Escape From Tarkov players. We do not collect, gather, log, or track:</p>
+        <p>• Personal Identifiers (such as names, email addresses, phone numbers, or gamer tags)<br>
+        • Device Identifiers (such as IMEI, Android Advertising ID, or MAC address)<br>
+        • Geolocation or precise physical location data<br>
+        • Network telemetry or diagnostic crash data</p>
+
+        <h2>2. Local Data Storage & User Control</h2>
+        <p>The App utilizes local Android Room (SQLite) storage solely to save custom tactical markers, floor notes, and extract checklist states placed by the user. This data remains on your physical device at all times and is never synchronized to cloud servers.</p>
+        <p>Users can permanently delete all locally stored data at any time through standard Android system settings: <strong>Settings &gt; Apps &gt; TarkovRadar &gt; Storage &amp; Cache &gt; Clear Storage</strong>.</p>
+
+        <h2>3. Third-Party Libraries and SDKs</h2>
+        <p>TarkovRadar does not integrate third-party advertising networks (e.g. AdMob), analytics services (e.g. Google Analytics / Firebase), social media tracking SDKs, or external marketing trackers. The application contains zero promotional trackers.</p>
+
+        <h2>4. Permissions Usage</h2>
+        <p>TarkovRadar requires zero sensitive Android permissions. It does not access your camera, microphone, contacts, location, or photo gallery.</p>
+
+        <h2>5. Children's Privacy</h2>
+        <p>TarkovRadar does not address anyone under the age of 13 and does not knowingly collect personally identifiable information from children.</p>
+
+        <h2>6. Changes to This Privacy Policy</h2>
+        <p>If our privacy practices change, this policy will be updated accordingly. Continued use of the application signifies acceptance of any updated terms.</p>
+
+        <h2>7. Contact Information</h2>
+        <div class="contact-box">
+            <p style="margin-bottom: 4px;">If you have any questions or feedback regarding this Privacy Policy, please contact the developer:</p>
+            <p style="color: var(--primary-accent); font-family: monospace; font-size: 14px; margin-bottom: 0;"><strong>Developer Contact:</strong> kthuang09@gmail.com</p>
+        </div>
+
+        <div class="footer">
+            TarkovRadar • Tactical Companion for Escape From Tarkov • All Rights Reserved
+        </div>
+    </div>
+</body>
+</html>
