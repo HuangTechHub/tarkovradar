@@ -98,6 +98,17 @@ fun PoiDirectorySheet(
             }
         }
 
+        map.lockedDoors.forEach { lock ->
+            if (lock.doorName.contains(searchQuery, ignoreCase = true) ||
+                lock.keyName.contains(searchQuery, ignoreCase = true) ||
+                lock.description.contains(searchQuery, ignoreCase = true) ||
+                lock.notableLoot.any { it.contains(searchQuery, ignoreCase = true) }
+            ) {
+                val tag = if (lock.isMarkedRoom) "MARKED" else "KEY LOCK"
+                list.add(Triple(tag, lock.doorName, TacticalMarker.LockedDoor(lock)))
+            }
+        }
+
         list
     }
 
@@ -175,6 +186,7 @@ fun PoiDirectorySheet(
                             is TacticalMarker.Extract -> Tuple5(marker.extract.x, marker.extract.y, marker.extract.floorIndex, marker.extract.factionColor, marker.extract.extractType.label)
                             is TacticalMarker.Boss -> Tuple5(marker.boss.x, marker.boss.y, marker.boss.floorIndex, TacticalHazardRed, "${marker.boss.spawnChancePercent}% Spawn Rate")
                             is TacticalMarker.Quest -> Tuple5(marker.quest.x, marker.quest.y, marker.quest.floorIndex, TacticalAmber, "Trader: ${marker.quest.trader}")
+                            is TacticalMarker.LockedDoor -> Tuple5(marker.lock.x, marker.lock.y, marker.lock.floorIndex, if (marker.lock.isMarkedRoom) Color(0xFFA855F7) else TacticalAmber, "Key: ${marker.lock.keyName} • ₽ ${formatter.format(marker.lock.estKeyPriceRubles)}")
                             is TacticalMarker.UserPin -> Tuple5(marker.pin.x, marker.pin.y, marker.pin.floorIndex, TacticalCyan, marker.pin.tagType)
                         }
 

@@ -24,11 +24,13 @@ import androidx.compose.material.icons.filled.CropFree
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.LabelOff
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.ViewInAr
+import com.example.model.MapOverlayMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -79,6 +81,9 @@ fun TacticalMapScreen(
     val showExtracts by viewModel.showExtracts.collectAsState()
     val showBosses by viewModel.showBosses.collectAsState()
     val showQuests by viewModel.showQuests.collectAsState()
+    val showLockedDoors by viewModel.showLockedDoors.collectAsState()
+    val showContainers by viewModel.showContainers.collectAsState()
+    val selectedContainerType by viewModel.selectedContainerType.collectAsState()
     val showGrid by viewModel.showGrid.collectAsState()
 
     val customPins by viewModel.customPins.collectAsState()
@@ -93,6 +98,8 @@ fun TacticalMapScreen(
 
     val remainingSeconds by viewModel.raidRemainingSeconds.collectAsState()
     val isTimerRunning by viewModel.isTimerRunning.collectAsState()
+    val overlayMode by viewModel.overlayMode.collectAsState()
+    val satelliteOpacity by viewModel.satelliteOpacity.collectAsState()
 
     // Calculate count of POIs per floor so the floor ladder shows item counts
     val floorPoiCounts = remember(selectedMap, customPins) {
@@ -107,6 +114,9 @@ fun TacticalMapScreen(
         }
         selectedMap.bosses.forEach { boss ->
             mapCounts[boss.floorIndex] = (mapCounts[boss.floorIndex] ?: 0) + 1
+        }
+        selectedMap.lockedDoors.forEach { lock ->
+            mapCounts[lock.floorIndex] = (mapCounts[lock.floorIndex] ?: 0) + 1
         }
         mapCounts
     }
@@ -127,8 +137,13 @@ fun TacticalMapScreen(
             showExtracts = showExtracts,
             showBosses = showBosses,
             showQuests = showQuests,
+            showLockedDoors = showLockedDoors,
+            showContainers = showContainers,
+            selectedContainerType = selectedContainerType,
             showGrid = showGrid,
             showLabels = showLabels,
+            overlayMode = overlayMode,
+            satelliteOpacity = satelliteOpacity,
             customPins = customPins,
             highlightMarkerId = highlightMarkerId,
             zoomScale = zoomScale,
@@ -166,8 +181,16 @@ fun TacticalMapScreen(
                 onToggleExtracts = { viewModel.toggleExtracts() },
                 showBosses = showBosses,
                 onToggleBosses = { viewModel.toggleBosses() },
+                showLockedDoors = showLockedDoors,
+                onToggleLockedDoors = { viewModel.toggleLockedDoors() },
+                showContainers = showContainers,
+                onToggleContainers = { viewModel.toggleContainers() },
+                selectedContainerType = selectedContainerType,
+                onSelectContainerType = { viewModel.selectContainerType(it) },
                 is3DMode = is3DMode,
-                onToggle3DMode = { viewModel.toggle3DMode() }
+                onToggle3DMode = { viewModel.toggle3DMode() },
+                overlayMode = overlayMode,
+                onToggleOverlayMode = { viewModel.toggleOverlayMode() }
             )
         }
 
@@ -249,6 +272,19 @@ fun TacticalMapScreen(
                 onClick = { viewModel.toggle3DMode() },
                 tint = if (is3DMode) TacticalCyan else TacticalAmber,
                 testTag = "toggle_3d_quick_button"
+            )
+
+            // Map Overlay Mode (SAT / HYBRID / TOPO)
+            FloatingToolButton(
+                icon = Icons.Default.Layers,
+                label = overlayMode.shortLabel,
+                onClick = { viewModel.toggleOverlayMode() },
+                tint = when (overlayMode) {
+                    MapOverlayMode.SATELLITE -> TacticalCyan
+                    MapOverlayMode.TACTICAL_HYBRID -> TacticalAmber
+                    MapOverlayMode.TOPO_SCHEMATIC -> Color(0xFF60A5FA)
+                },
+                testTag = "toggle_overlay_layer_button"
             )
         }
 
@@ -381,11 +417,13 @@ fun TacticalMapScreen(
                         is TacticalMarker.Extract -> Triple(marker.extract.x, marker.extract.y, marker.extract.floorIndex)
                         is TacticalMarker.Boss -> Triple(marker.boss.x, marker.boss.y, marker.boss.floorIndex)
                         is TacticalMarker.Quest -> Triple(marker.quest.x, marker.quest.y, marker.quest.floorIndex)
+                        is TacticalMarker.LockedDoor -> Triple(marker.lock.x, marker.lock.y, marker.lock.floorIndex)
                         is TacticalMarker.UserPin -> Triple(marker.pin.x, marker.pin.y, marker.pin.floorIndex)
                     }
                     viewModel.focusOnLocation(mx, my, mf, marker)
                 },
                 onDismiss = { viewModel.dismissMarkerDetail() },
+                getLivePrice = { viewModel.getMarketItem(it) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(horizontal = 10.dp, vertical = 8.dp)

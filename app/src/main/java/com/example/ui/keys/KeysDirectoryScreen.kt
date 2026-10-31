@@ -53,10 +53,13 @@ import com.example.ui.theme.TextSecondary
 import java.text.NumberFormat
 import java.util.Locale
 
+import com.example.data.market.MarketItem
+
 @Composable
 fun KeysDirectoryScreen(
     keysList: List<KeyEntry>,
     onSelectKeyMap: (String) -> Unit,
+    getMarketItem: (String) -> MarketItem? = { null },
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -141,16 +144,17 @@ fun KeysDirectoryScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(filteredKeys, key = { it.id }) { key ->
-                KeyCard(key)
+                KeyCard(key = key, marketItem = getMarketItem(key.name))
             }
         }
     }
 }
 
 @Composable
-private fun KeyCard(key: KeyEntry) {
+private fun KeyCard(key: KeyEntry, marketItem: MarketItem? = null) {
     val formatter = NumberFormat.getNumberInstance(Locale.US)
-    val priceFormatted = "₽ ${formatter.format(key.estimatedValue)}"
+    val displayPrice = marketItem?.effectivePrice ?: key.estimatedValue
+    val priceFormatted = "₽ ${formatter.format(displayPrice)}"
 
     Box(
         modifier = Modifier
@@ -185,13 +189,25 @@ private fun KeyCard(key: KeyEntry) {
                     )
                 }
 
-                Text(
-                    text = priceFormatted,
-                    color = RarityLegendary,
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold
-                )
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = priceFormatted,
+                        color = RarityLegendary,
+                        fontSize = 13.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (marketItem != null) {
+                        val trendColor = if (marketItem.changeLast48hPercent >= 0) com.example.ui.theme.TacticalEmerald else com.example.ui.theme.TacticalHazardRed
+                        Text(
+                            text = "LIVE ${marketItem.formattedChange}",
+                            color = trendColor,
+                            fontSize = 10.sp,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(6.dp))

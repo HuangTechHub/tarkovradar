@@ -73,4 +73,31 @@ class TarkovRadarUnitTest {
         assertEquals("customs", marked314.mapId)
         assertTrue(marked314.estimatedValue > 1000000)
     }
+
+    @Test
+    fun testMarketPresetsIntegrity() {
+        val items = com.example.data.market.TarkovMarketPresets.defaultItems
+        assertTrue("Market catalog should contain high-value items", items.size >= 15)
+
+        val redKeycard = items.first { it.id == "keycard_red" }
+        assertTrue("Red Keycard should have substantial flea value", redKeycard.effectivePrice > 10000000)
+        assertTrue("Red Keycard should have therapist trade price", redKeycard.bestTraderPriceRUB > 0)
+        assertEquals(redKeycard.effectivePrice, redKeycard.pricePerSlot) // 1 slot item
+
+        val gpu = items.first { it.id == "item_gpu" }
+        assertEquals(2, gpu.slots)
+        assertEquals(gpu.effectivePrice / 2, gpu.pricePerSlot)
+    }
+
+    @Test
+    fun testMarketFuzzyLookup() {
+        val repo = com.example.data.market.MarketRepository()
+        val foundKey = repo.findItemByFuzzyName("314")
+        assertNotNull("Should find marked 314 key by short search query", foundKey)
+        assertTrue(foundKey!!.shortName.contains("314"))
+
+        val foundLedx = repo.findItemByFuzzyName("ledx")
+        assertNotNull("Should find LEDX by case-insensitive name", foundLedx)
+        assertEquals("LEDX", foundLedx!!.shortName)
+    }
 }

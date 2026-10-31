@@ -13,7 +13,7 @@ An offline, zero-telemetry tactical companion and interactive map suite for Esca
 ## App Specifications
 
 - **Package Name**: `com.tarkovradar.app`
-- **Current Version**: `versionCode 4`, `versionName 4.0`
+- **Current Version**: `versionCode 5`, `versionName 5.0`
 - **Privacy Policy**: [PRIVACY_POLICY.md](PRIVACY_POLICY.md) | [docs/index.html](docs/index.html) (GitHub Pages ready)
 
 ## Google Play Publishing Documentation

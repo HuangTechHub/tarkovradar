@@ -88,12 +88,13 @@ fun TacticalDetailDialog(
                         is TacticalMarker.Extract -> "EXTRACTION POINT"
                         is TacticalMarker.Boss -> "SCAV BOSS THREAT"
                         is TacticalMarker.Quest -> "TASK OBJECTIVE"
+                        is TacticalMarker.LockedDoor -> if (marker.lock.isMarkedRoom) "MARKED ROOM INTEL" else "LOCKED DOOR & KEY INTEL"
                         is TacticalMarker.UserPin -> "OPERATOR WAYPOINT"
                     }
 
                     Text(
                         text = headerCategory,
-                        color = TacticalAmber,
+                        color = if (marker is TacticalMarker.LockedDoor && marker.lock.isMarkedRoom) Color(0xFFC084FC) else TacticalAmber,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
@@ -119,6 +120,7 @@ fun TacticalDetailDialog(
                     is TacticalMarker.Extract -> ExtractDetailContent(marker.extract)
                     is TacticalMarker.Boss -> BossDetailContent(marker.boss)
                     is TacticalMarker.Quest -> QuestDetailContent(marker.quest)
+                    is TacticalMarker.LockedDoor -> LockedDoorDetailContent(marker.lock)
                     is TacticalMarker.UserPin -> PinDetailContent(marker.pin, onDeletePin, onDismiss)
                 }
 
@@ -380,6 +382,101 @@ private fun PinDetailContent(
                 Text(pin.note.ifBlank { "No notes specified." }, color = TextPrimary, fontSize = 13.sp)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("Coordinates: X=${pin.x.toInt()}, Y=${pin.y.toInt()}", color = TextMuted, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LockedDoorDetailContent(lock: com.example.model.LockedDoorMarker) {
+    val formatter = java.text.NumberFormat.getNumberInstance(java.util.Locale.US)
+    val accentColor = if (lock.isMarkedRoom) Color(0xFFA855F7) else TacticalAmber
+
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = lock.doorName,
+                color = TextPrimary,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(accentColor.copy(alpha = 0.2f))
+                    .border(BorderStroke(1.dp, accentColor), RoundedCornerShape(4.dp))
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = if (lock.isMarkedRoom) "MARKED ROOM" else "KEY LOCKED",
+                    color = accentColor,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Text(
+            text = "Location: ${lock.mapLocation}",
+            color = TextSecondary,
+            fontSize = 12.sp,
+            fontFamily = FontFamily.Monospace
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Required Key & Value Card
+        TacticalCard(
+            modifier = Modifier.fillMaxWidth(),
+            borderColor = accentColor.copy(alpha = 0.5f),
+            backgroundColor = TarkovBackground
+        ) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("REQUIRED KEY", color = TextMuted, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                        Text(lock.keyName, color = TacticalAmber, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("EST. FLEA PRICE", color = TextMuted, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                        Text("₽ ${formatter.format(lock.estKeyPriceRubles)}", color = TacticalCyan, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TacticalCard(modifier = Modifier.fillMaxWidth(), backgroundColor = TarkovBackground) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(lock.description, color = TextPrimary, fontSize = 13.sp)
+
+                if (lock.notableLoot.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("NOTABLE LOOT INSIDE:", color = TacticalAmber, fontSize = 11.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+                    lock.notableLoot.forEach { item ->
+                        Text("• $item", color = TextSecondary, fontSize = 12.sp)
+                    }
+                }
+
+                if (lock.requiredForQuests.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("REQUIRED FOR TASKS:", color = TacticalCyan, fontSize = 11.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+                    lock.requiredForQuests.forEach { quest ->
+                        Text("◆ $quest", color = TextSecondary, fontSize = 12.sp)
+                    }
+                }
             }
         }
     }

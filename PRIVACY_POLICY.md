@@ -1,7 +1,7 @@
 # Privacy Policy for TarkovRadar
 
 **Effective Date:** October 31, 2026  
-**App Version:** 4.0  
+**App Version:** 5.0  
 **Developer Contact:** kthuang09@gmail.com  
 **Application ID:** `com.tarkovradar.app`  
 

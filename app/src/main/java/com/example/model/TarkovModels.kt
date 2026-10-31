@@ -19,6 +19,12 @@ enum class Rarity(val label: String, val tier: String, val color: Color) {
     COMMON("C-Tier Common", "C", RarityCommon)
 }
 
+enum class MapOverlayMode(val label: String, val shortLabel: String, val description: String) {
+    SATELLITE("Satellite Recon", "SAT", "High-resolution aerial satellite reconnaissance overlay"),
+    TACTICAL_HYBRID("Tactical Hybrid", "HYBRID", "Blended satellite terrain with high-contrast tactical schematics"),
+    TOPO_SCHEMATIC("Topographic Vector", "TOPO", "Crisp military vector topographic blueprint")
+}
+
 enum class LootCategory(val displayName: String, val iconName: String) {
     VALUABLES("Valuables", "monetization_on"),
     TECH("Electronics & Tech", "memory"),
@@ -140,6 +146,21 @@ data class MapVectorFeature(
     val label: String? = null
 )
 
+data class LockedDoorMarker(
+    val id: String,
+    val keyName: String,
+    val doorName: String,
+    val mapLocation: String,
+    val description: String,
+    val x: Float,
+    val y: Float,
+    val floorIndex: Int = 0,
+    val isMarkedRoom: Boolean = false,
+    val estKeyPriceRubles: Int = 250000,
+    val notableLoot: List<String> = emptyList(),
+    val requiredForQuests: List<String> = emptyList()
+)
+
 data class TarkovMap(
     val id: String,
     val name: String,
@@ -154,7 +175,8 @@ data class TarkovMap(
     val extractions: List<ExtractionPoint>,
     val bosses: List<BossSpawn>,
     val quests: List<QuestMarker>,
-    val vectorFeatures: List<MapVectorFeature>
+    val vectorFeatures: List<MapVectorFeature>,
+    val lockedDoors: List<LockedDoorMarker> = emptyList()
 )
 
 data class AmmoEntry(

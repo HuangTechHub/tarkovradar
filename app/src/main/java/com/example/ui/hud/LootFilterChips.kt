@@ -34,8 +34,16 @@ fun LootFilterChips(
     onToggleExtracts: () -> Unit,
     showBosses: Boolean,
     onToggleBosses: () -> Unit,
+    showLockedDoors: Boolean = true,
+    onToggleLockedDoors: () -> Unit = {},
+    showContainers: Boolean = true,
+    onToggleContainers: () -> Unit = {},
+    selectedContainerType: String? = null,
+    onSelectContainerType: (String?) -> Unit = {},
     is3DMode: Boolean,
     onToggle3DMode: () -> Unit,
+    overlayMode: com.example.model.MapOverlayMode = com.example.model.MapOverlayMode.SATELLITE,
+    onToggleOverlayMode: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -49,6 +57,19 @@ fun LootFilterChips(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Map Overlay Layer Switcher (SAT / HYBRID / TOPO)
+        TacticalChip(
+            text = "LAYER: ${overlayMode.shortLabel}",
+            isSelected = true,
+            onClick = onToggleOverlayMode,
+            activeColor = when (overlayMode) {
+                com.example.model.MapOverlayMode.SATELLITE -> TacticalCyan
+                com.example.model.MapOverlayMode.TACTICAL_HYBRID -> TacticalAmber
+                com.example.model.MapOverlayMode.TOPO_SCHEMATIC -> androidx.compose.ui.graphics.Color(0xFF60A5FA)
+            },
+            testTag = "toggle_overlay_chip"
+        )
+
         // 2D / 3D Isometric View Mode Switch
         TacticalChip(
             text = if (is3DMode) "MODE: 3D ISOMETRIC" else "MODE: 2D TOP-DOWN",
@@ -105,6 +126,48 @@ fun LootFilterChips(
             activeColor = TacticalHazardRed,
             testTag = "filter_bosses_chip"
         )
+
+        // Keys & Locked Doors toggle (Tarkov.dev Parity)
+        TacticalChip(
+            text = if (showLockedDoors) "🔑 KEYS & LOCKS: ON" else "🔑 KEYS & LOCKS: OFF",
+            isSelected = showLockedDoors,
+            onClick = onToggleLockedDoors,
+            activeColor = TacticalAmber,
+            testTag = "filter_locked_doors_chip"
+        )
+
+        // Containers toggle (Tarkov.dev Parity)
+        TacticalChip(
+            text = if (showContainers) "📦 CONTAINERS: ON" else "📦 CONTAINERS: OFF",
+            isSelected = showContainers,
+            onClick = onToggleContainers,
+            activeColor = TacticalCyan,
+            testTag = "filter_containers_chip"
+        )
+
+        // Granular Container Types
+        if (showContainers) {
+            listOf("Safe", "PC Block", "Medcase", "Weapon Box", "Jacket", "Toolbox", "Dead Scav", "Duffle Bag").forEach { cType ->
+                val isSelected = selectedContainerType?.equals(cType, ignoreCase = true) == true
+                TacticalChip(
+                    text = cType.uppercase(),
+                    isSelected = isSelected,
+                    onClick = {
+                        onSelectContainerType(if (isSelected) null else cType)
+                    },
+                    activeColor = when (cType) {
+                        "Safe" -> androidx.compose.ui.graphics.Color(0xFFF59E0B)
+                        "PC Block" -> androidx.compose.ui.graphics.Color(0xFF38BDF8)
+                        "Medcase" -> androidx.compose.ui.graphics.Color(0xFFEF4444)
+                        "Weapon Box" -> androidx.compose.ui.graphics.Color(0xFF10B981)
+                        "Jacket" -> androidx.compose.ui.graphics.Color(0xFFA855F7)
+                        "Toolbox" -> androidx.compose.ui.graphics.Color(0xFFF97316)
+                        else -> androidx.compose.ui.graphics.Color(0xFF94A3B8)
+                    },
+                    testTag = "filter_container_${cType.lowercase().replace(" ", "_")}"
+                )
+            }
+        }
 
         // Category filter chips
         LootCategory.values().forEach { category ->

@@ -10,8 +10,8 @@ This guide provides everything needed to prepare, configure, and publish **Tarko
 | :--- | :--- |
 | **App Name** | `TarkovRadar` |
 | **Package Name (`applicationId`)** | `com.tarkovradar.app` |
-| **Current Version Code** | `4` |
-| **Current Version Name** | `4.0` |
+| **Current Version Code** | `5` |
+| **Current Version Name** | `5.0` |
 | **Developer Contact Email** | `kthuang09@gmail.com` |
 | **Privacy Policy URLs (Any of these work)** | **Option A (GitHub Pages - Recommended):** `https://<github-username>.github.io/<repo-name>/`<br>**Option B (GitHub Markdown):** `https://github.com/<github-username>/<repo-name>/blob/main/PRIVACY_POLICY.md`<br>**Option C (Cloud Run / AI Studio):** `https://ais-pre-3da7mm66phssvwyi2vytqa-628863764922.us-west2.run.app/privacy.html` |
 | **App Type** | App (Tools / Game Companion) |

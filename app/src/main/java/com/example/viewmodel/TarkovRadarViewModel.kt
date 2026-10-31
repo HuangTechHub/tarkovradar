@@ -22,26 +22,44 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import com.example.data.market.MarketItem
+import com.example.data.market.MarketRepository
+import com.example.data.market.MarketSyncState
 import kotlinx.coroutines.launch
 
 enum class AppTab(val title: String, val iconName: String) {
-    TACTICAL_MAP("Tactical Map", "map"),
-    BALLISTICS("Ballistics", "grain"),
-    KEYS_DIR("Keys & Locks", "vpn_key")
+    TACTICAL_MAP("3D Map", "map"),
+    LIVE_MARKET("Flea Market", "trending_up"),
+    KEYS_DIR("Keys & Locks", "vpn_key"),
+    BALLISTICS("Ballistics", "grain")
 }
 
 class TarkovRadarViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: TarkovRepository
+    private val marketRepository: MarketRepository
 
     init {
         val database = TarkovDatabase.getDatabase(application)
         repository = TarkovRepository(database.customPinDao())
+        marketRepository = MarketRepository()
     }
 
     val maps: List<TarkovMap> = repository.getAllMaps()
     val ammoList: List<AmmoEntry> = repository.getAllAmmo()
     val keysList: List<KeyEntry> = repository.getAllKeys()
+
+    // Live Flea Market state
+    val marketItems: StateFlow<List<MarketItem>> = marketRepository.items
+    val marketSyncState: StateFlow<MarketSyncState> = marketRepository.syncState
+
+    fun refreshMarket() {
+        marketRepository.refresh()
+    }
+
+    fun getMarketItem(name: String): MarketItem? {
+        return marketRepository.findItemByFuzzyName(name)
+    }
 
     // Navigation tab
     private val _currentTab = MutableStateFlow(AppTab.TACTICAL_MAP)
@@ -88,8 +106,52 @@ class TarkovRadarViewModel(application: Application) : AndroidViewModel(applicat
     private val _showQuests = MutableStateFlow(true)
     val showQuests: StateFlow<Boolean> = _showQuests.asStateFlow()
 
+    private val _showLockedDoors = MutableStateFlow(true)
+    val showLockedDoors: StateFlow<Boolean> = _showLockedDoors.asStateFlow()
+
+    private val _showContainers = MutableStateFlow(true)
+    val showContainers: StateFlow<Boolean> = _showContainers.asStateFlow()
+
+    private val _selectedContainerType = MutableStateFlow<String?>(null)
+    val selectedContainerType: StateFlow<String?> = _selectedContainerType.asStateFlow()
+
     private val _showGrid = MutableStateFlow(true)
     val showGrid: StateFlow<Boolean> = _showGrid.asStateFlow()
+
+    fun toggleLockedDoors() {
+        _showLockedDoors.value = !_showLockedDoors.value
+    }
+
+    fun toggleContainers() {
+        _showContainers.value = !_showContainers.value
+    }
+
+    fun selectContainerType(type: String?) {
+        _selectedContainerType.value = type
+    }
+
+    // Map Overlay style & transparency
+    private val _overlayMode = MutableStateFlow(com.example.model.MapOverlayMode.SATELLITE)
+    val overlayMode: StateFlow<com.example.model.MapOverlayMode> = _overlayMode.asStateFlow()
+
+    private val _satelliteOpacity = MutableStateFlow(0.92f)
+    val satelliteOpacity: StateFlow<Float> = _satelliteOpacity.asStateFlow()
+
+    fun setOverlayMode(mode: com.example.model.MapOverlayMode) {
+        _overlayMode.value = mode
+    }
+
+    fun toggleOverlayMode() {
+        _overlayMode.value = when (_overlayMode.value) {
+            com.example.model.MapOverlayMode.SATELLITE -> com.example.model.MapOverlayMode.TACTICAL_HYBRID
+            com.example.model.MapOverlayMode.TACTICAL_HYBRID -> com.example.model.MapOverlayMode.TOPO_SCHEMATIC
+            com.example.model.MapOverlayMode.TOPO_SCHEMATIC -> com.example.model.MapOverlayMode.SATELLITE
+        }
+    }
+
+    fun setSatelliteOpacity(opacity: Float) {
+        _satelliteOpacity.value = opacity.coerceIn(0.2f, 1.0f)
+    }
 
     // Active dialogs
     private val _selectedMarker = MutableStateFlow<TacticalMarker?>(null)
@@ -204,6 +266,7 @@ class TarkovRadarViewModel(application: Application) : AndroidViewModel(applicat
             is TacticalMarker.Extract -> marker.extract.id
             is TacticalMarker.Boss -> marker.boss.name
             is TacticalMarker.Quest -> marker.quest.id
+            is TacticalMarker.LockedDoor -> marker.lock.id
             is TacticalMarker.UserPin -> marker.pin.id.toString()
         }
     }
@@ -249,6 +312,7 @@ class TarkovRadarViewModel(application: Application) : AndroidViewModel(applicat
             is TacticalMarker.Extract -> marker.extract.id
             is TacticalMarker.Boss -> marker.boss.name
             is TacticalMarker.Quest -> marker.quest.id
+            is TacticalMarker.LockedDoor -> marker.lock.id
             is TacticalMarker.UserPin -> marker.pin.id.toString()
         }
     }

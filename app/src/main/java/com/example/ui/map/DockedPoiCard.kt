@@ -49,19 +49,25 @@ import com.example.ui.theme.TextSecondary
 import java.text.NumberFormat
 import java.util.Locale
 
+import com.example.data.market.MarketItem
+
 @Composable
 fun DockedPoiCard(
     marker: TacticalMarker,
     onOpenFullDetail: () -> Unit,
     onCenterOnMarker: () -> Unit,
     onDismiss: () -> Unit,
+    getLivePrice: ((String) -> MarketItem?)? = null,
     modifier: Modifier = Modifier
 ) {
     val formatter = NumberFormat.getNumberInstance(Locale.US)
 
     val (title, subtitle, accentColor, floorNum) = when (marker) {
         is TacticalMarker.Loot -> {
-            val priceStr = "₽ ${formatter.format(marker.spawn.estValueRoubles)}"
+            val liveItem = getLivePrice?.invoke(marker.spawn.name)
+            val priceVal = liveItem?.effectivePrice ?: marker.spawn.estValueRoubles
+            val trendStr = if (liveItem != null) " [LIVE ${liveItem.formattedChange}]" else ""
+            val priceStr = "₽ ${formatter.format(priceVal)}$trendStr"
             Quad(marker.spawn.name, "${marker.spawn.containerType} • $priceStr", marker.spawn.rarity.color, marker.spawn.floorIndex)
         }
         is TacticalMarker.Extract -> {
@@ -72,6 +78,19 @@ fun DockedPoiCard(
         }
         is TacticalMarker.Quest -> {
             Quad(marker.quest.questName, "Trader: ${marker.quest.trader}", TacticalAmber, marker.quest.floorIndex)
+        }
+        is TacticalMarker.LockedDoor -> {
+            val liveKey = getLivePrice?.invoke(marker.lock.keyName)
+            val keyPriceVal = liveKey?.effectivePrice ?: marker.lock.estKeyPriceRubles
+            val liveTag = if (liveKey != null) " [LIVE ${liveKey.formattedChange}]" else ""
+            val keyPriceStr = "Key: ₽ ${formatter.format(keyPriceVal)}$liveTag"
+            val markedTag = if (marker.lock.isMarkedRoom) "[MARKED] " else ""
+            Quad(
+                "$markedTag${marker.lock.doorName}",
+                "Requires ${marker.lock.keyName} • $keyPriceStr",
+                if (marker.lock.isMarkedRoom) Color(0xFFA855F7) else TacticalAmber,
+                marker.lock.floorIndex
+            )
         }
         is TacticalMarker.UserPin -> {
             Quad("Waypoint: ${marker.pin.title}", "Custom Tactical Pin (${marker.pin.tagType})", TacticalCyan, marker.pin.floorIndex)
@@ -100,6 +119,23 @@ fun DockedPoiCard(
                     when (marker) {
                         is TacticalMarker.Loot -> RarityBadge(rarity = marker.spawn.rarity)
                         is TacticalMarker.Extract -> FactionBadge(faction = marker.extract.faction)
+                        is TacticalMarker.LockedDoor -> {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background((if (marker.lock.isMarkedRoom) Color(0xFFA855F7) else TacticalAmber).copy(alpha = 0.2f))
+                                    .border(BorderStroke(1.dp, if (marker.lock.isMarkedRoom) Color(0xFFA855F7) else TacticalAmber), RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = if (marker.lock.isMarkedRoom) "MARKED ROOM" else "LOCKED DOOR",
+                                    color = if (marker.lock.isMarkedRoom) Color(0xFFC084FC) else TacticalAmber,
+                                    fontSize = 10.sp,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                         else -> {
                             Box(
                                 modifier = Modifier

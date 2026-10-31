@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Grain
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -34,8 +35,10 @@ import androidx.compose.ui.unit.sp
 import com.example.ui.ballistics.BallisticsScreen
 import com.example.ui.keys.KeysDirectoryScreen
 import com.example.ui.map.TacticalMapScreen
+import com.example.ui.market.LiveMarketScreen
 import com.example.ui.theme.TacticalAmber
 import com.example.ui.theme.TacticalCyan
+import com.example.ui.theme.TacticalEmerald
 import com.example.ui.theme.TarkovBackground
 import com.example.ui.theme.TarkovRadarTheme
 import com.example.ui.theme.TarkovSurface
@@ -62,8 +65,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TarkovRadarApp(viewModel: TarkovRadarViewModel) {
     val currentTab by viewModel.currentTab.collectAsState()
+    val marketItems by viewModel.marketItems.collectAsState()
+    val marketSyncState by viewModel.marketSyncState.collectAsState()
 
-    // Predictive back handler: return to Map when on Ballistics or Keys
+    // Predictive back handler: return to Map when on sub-screens
     BackHandler(enabled = currentTab != AppTab.TACTICAL_MAP) {
         viewModel.selectTab(AppTab.TACTICAL_MAP)
     }
@@ -91,7 +96,7 @@ fun TarkovRadarApp(viewModel: TarkovRadarViewModel) {
                             text = "3D MAP",
                             fontFamily = FontFamily.Monospace,
                             fontWeight = if (currentTab == AppTab.TACTICAL_MAP) FontWeight.Bold else FontWeight.Normal,
-                            fontSize = 11.sp
+                            fontSize = 10.sp
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(
@@ -105,25 +110,25 @@ fun TarkovRadarApp(viewModel: TarkovRadarViewModel) {
                 )
 
                 NavigationBarItem(
-                    selected = currentTab == AppTab.BALLISTICS,
-                    onClick = { viewModel.selectTab(AppTab.BALLISTICS) },
-                    icon = { Icon(Icons.Default.Grain, contentDescription = "Ballistics Matrix") },
+                    selected = currentTab == AppTab.LIVE_MARKET,
+                    onClick = { viewModel.selectTab(AppTab.LIVE_MARKET) },
+                    icon = { Icon(Icons.Default.TrendingUp, contentDescription = "Live Flea Market") },
                     label = {
                         Text(
-                            text = "BALLISTICS",
+                            text = "FLEA INTEL",
                             fontFamily = FontFamily.Monospace,
-                            fontWeight = if (currentTab == AppTab.BALLISTICS) FontWeight.Bold else FontWeight.Normal,
-                            fontSize = 11.sp
+                            fontWeight = if (currentTab == AppTab.LIVE_MARKET) FontWeight.Bold else FontWeight.Normal,
+                            fontSize = 10.sp
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = TarkovSurface,
-                        selectedTextColor = TacticalCyan,
-                        indicatorColor = TacticalCyan,
+                        selectedTextColor = TacticalEmerald,
+                        indicatorColor = TacticalEmerald,
                         unselectedIconColor = TextMuted,
                         unselectedTextColor = TextMuted
                     ),
-                    modifier = Modifier.testTag("nav_tab_ballistics")
+                    modifier = Modifier.testTag("nav_tab_market")
                 )
 
                 NavigationBarItem(
@@ -132,10 +137,10 @@ fun TarkovRadarApp(viewModel: TarkovRadarViewModel) {
                     icon = { Icon(Icons.Default.VpnKey, contentDescription = "Keys & Locks") },
                     label = {
                         Text(
-                            text = "KEYS & LOCKS",
+                            text = "KEYS",
                             fontFamily = FontFamily.Monospace,
                             fontWeight = if (currentTab == AppTab.KEYS_DIR) FontWeight.Bold else FontWeight.Normal,
-                            fontSize = 11.sp
+                            fontSize = 10.sp
                         )
                     },
                     colors = NavigationBarItemDefaults.colors(
@@ -147,6 +152,28 @@ fun TarkovRadarApp(viewModel: TarkovRadarViewModel) {
                     ),
                     modifier = Modifier.testTag("nav_tab_keys")
                 )
+
+                NavigationBarItem(
+                    selected = currentTab == AppTab.BALLISTICS,
+                    onClick = { viewModel.selectTab(AppTab.BALLISTICS) },
+                    icon = { Icon(Icons.Default.Grain, contentDescription = "Ballistics Matrix") },
+                    label = {
+                        Text(
+                            text = "BALLISTICS",
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = if (currentTab == AppTab.BALLISTICS) FontWeight.Bold else FontWeight.Normal,
+                            fontSize = 10.sp
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = TarkovSurface,
+                        selectedTextColor = TacticalCyan,
+                        indicatorColor = TacticalCyan,
+                        unselectedIconColor = TextMuted,
+                        unselectedTextColor = TextMuted
+                    ),
+                    modifier = Modifier.testTag("nav_tab_ballistics")
+                )
             }
         }
     ) { innerPadding ->
@@ -157,14 +184,20 @@ fun TarkovRadarApp(viewModel: TarkovRadarViewModel) {
         ) {
             when (currentTab) {
                 AppTab.TACTICAL_MAP -> TacticalMapScreen(viewModel = viewModel)
-                AppTab.BALLISTICS -> BallisticsScreen(ammoList = viewModel.ammoList)
+                AppTab.LIVE_MARKET -> LiveMarketScreen(
+                    items = marketItems,
+                    syncState = marketSyncState,
+                    onRefresh = { viewModel.refreshMarket() }
+                )
                 AppTab.KEYS_DIR -> KeysDirectoryScreen(
                     keysList = viewModel.keysList,
+                    getMarketItem = { viewModel.getMarketItem(it) },
                     onSelectKeyMap = { mapId ->
                         viewModel.selectMapById(mapId)
                         viewModel.selectTab(AppTab.TACTICAL_MAP)
                     }
                 )
+                AppTab.BALLISTICS -> BallisticsScreen(ammoList = viewModel.ammoList)
             }
         }
     }
